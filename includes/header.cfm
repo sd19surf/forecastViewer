@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="./styles/css/leaflet.css"/>
 <link rel="stylesheet" href="./styles/css/viewer.css"/>
 <link rel="stylesheet" href="./styles/css/jquery-ui.css"/>
+<link rel="stylesheet" href="./styles/css/bootstrap.min.css"/>
 
  <script src="./scripts/leaflet.js"></script>
  <script src="./scripts/SliderControl.js"></script>
