@@ -18,7 +18,23 @@ var sliderControl = null;
 
 </script>
 
-<div id="mapid"></div>
+<div class="row">
+<div class="col-sm-4" id="threat">
+<table id="threatTable">
+     <tr>
+	<th>Threat</th>
+	<th>Information</th>
+	<th>Valid Time</th>
+    </tr>
+    <tr>
+	<td></td>
+	<td></td>
+	<td></td>
+    </tr>
+
+</div>
+<div class="col-sm-8" id="mapid"></div>
+</div>
 
 <script>
 
