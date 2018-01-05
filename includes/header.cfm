@@ -8,5 +8,6 @@
  <script src="./scripts/SliderControl.js"></script>
  <script src="./scripts/jquery-1.9.1.min.js"></script>
  <script src="./scripts/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 
 </head>
