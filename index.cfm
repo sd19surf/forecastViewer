@@ -20,7 +20,7 @@ var sliderControl = null;
 
 <div class="row">
 <div class="col-sm-4" id="threat">
-<table id="threatTable">
+<table name="threatTable">
      <tr>
 	<th>Threat</th>
 	<th>Information</th>
