@@ -45,73 +45,66 @@
     </cffunction>
     
     
-    
-    
-    <cffunction name="getMember" access="private" returnType="any">
-    
-    <cfargument name="lastName" required="true" type="string" />
+  <cffunction name="getStations" access="remote" returnType="any">
         
+    <cfreturn createJSON()/>      
+        
+  </cffunction>  
     
-       <cfquery name="selectMember" datasource="MySQL">
-        SELECT user_id,first_name,last_name,dob,email
-        FROM inbox.deacon_roster
-        WHERE LAST_NAME LIKE "#lastName#"
-        
-        </cfquery>   
-        
 
-    <cfoutput query="selectMember" group="LAST_NAME">
-       <cfoutput> 
-           <cfset obj = {
-            "USER_ID" = USER_ID,
-            "FIRST_NAME" = FIRST_NAME,
-            "LAST_NAME" = LAST_NAME,
-            "DOB" = DOB,
-            "EMAIL" = EMAIL
-         } />
-        </cfoutput>
-    </cfoutput>
-
-    <cfprocessingdirective suppresswhitespace="Yes"> 
-        <cfoutput>
-            #serializeJSON(selectMember,"struct")#
-        </cfoutput>
-    </cfprocessingdirective>
-
-    <cfsetting enablecfoutputonly="No" showdebugoutput="No" />
-</cffunction>
-        
+    <cffunction name="createJSON" access="private" returnType="ANY">
     
-    
-    <cffunction name="insertMember" access="private" returnType="any">
-    
-    <cfargument name="firstName" required="true" type="string" />
-    <cfargument name="lastName" required="true" type="string" />
-    <cfargument name="DOB" required="true" type="date" />
-    <cfargument name="email" required="true" type="string" />
-        
-    <cfset userID = CreateUUID() />
     
         
-    <cfquery name="insertMember" datasource="MySQL" >
-        INSERT INTO inbox.deacon_roster
-        (user_id,first_name,last_name,dob,email)
-        VALUES(
-            <cfqueryparam cfsqltype="cf_sql_char" value="#userID#" />,
-            <cfqueryparam cfsqltype="cf_sql_char" value="#firstName#" />,
-            <cfqueryparam cfsqltype="cf_sql_char" value="#lastName#" />,
-            <cfqueryparam cfsqltype="cf_sql_char" value="#DOB#" />,
-            <cfqueryparam cfsqltype="cf_sql_char" value="#email#" />            
-                )
+    <cfquery name="getData" datasource="MySQL" >
+        SELECT station_name, lat, lon, icao
+        FROM web.station_list
+        WHERE END > '20170101' AND CTRY = "IZ" AND ICAO ="ORBD" OR ICAO = "ORBI"
+        ORDER BY ICAO
     </cfquery>
-    
         
-    
+        
+    <!---build a geoJSON file with all the output from the query --->
+     <cfset counter = 1 />  
+    <cfsavecontent variable="myJSON">
+    <cfoutput>
+
+        
+        {
+    "type": "FeatureCollection",
+        "features": [
+        
+        <cfloop query="getData">
+        {
+          "type": "Feature",
+          "properties": {
+		  "icao": "#icao#",
+		  "station name":"#station_name#"
+            },
+            "geometry": {
+                "type": "Point",
+                        "coordinates": [#lon#, #lat#]
+            }
+        }
+       
+      <cfif getData.recordcount neq counter>
+          
+            ,
+        <cfelse>
+            ]
+        </cfif>
+          <cfset counter++>
+     </cfloop>
+        }
+    </cfoutput>
+    </cfsavecontent> 
+        
+    <cfprocessingdirective suppresswhitespace="Yes"> 
+      <cfoutput> 
+    <cfreturn #serializeJSON(myJSON)# />
+      </cfoutput>
+        </cfprocessingdirective> 
     </cffunction>
-    
-    
-
-
 
 
 
