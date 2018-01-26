@@ -10,6 +10,8 @@
  <script src="./scripts/jquery-ui.js"></script>
  <script src="./scripts/turf.min.js"></script>
  <script src="./scripts/leaflet-fractional-zoom-control.js"></script>
+ <script src="./scripts/leaflet-heat.js"></script>
+<script src="./scripts/leaflet-image.js"></script>
     
  <!---Added static maps in geoJSON for lowbandwidth viewing--->
 <script src="blocks.json" type="text/javascript"></script>

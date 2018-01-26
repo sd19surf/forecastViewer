@@ -25,12 +25,17 @@ var world;
 
 </table>
 </div>
+<!---
+<button id='snap' class='ui-button'>Take a snapshot</button>
+
+<div id='snapshot'>test</div>
+--->
 <div class="col-sm-8" id="mapid"></div>
 </div>
 
 <script>
     
-    
+
 
 
 //Fetch some data from a GeoJSON file
@@ -103,6 +108,25 @@ var stringCoastline = L.geoJson(coastline, {
         attribution: "Natural Earth Coastline"
         });
 
+//playing with heatmap
+var heat = L.heatLayer([], {maxZoom: 18}).addTo(map);
+
+var draw = true;
+
+
+
+// add points on mouse move (except when interacting with the map)
+
+map.on({
+    movestart: function () { draw = false; },
+    moveend:   function () { draw = true; },
+    mousemove: function (e) {
+        if (draw) {
+            heat.addLatLng(e.latlng);
+
+        }
+    }
+})
 
    // var intersection = turf.intersect(stringWorld, testlayer);
     
@@ -180,6 +204,26 @@ function getICAOs() {
 
      
 } 
+    
+   var snapshot = document.getElementById('snapshot'); 
+    
+    document.getElementById('snap').addEventListener('click', function() {
+        leafletImage(map, doImage);
+        
+});
+
+
+
+function doImage(err, canvas) {
+    var img = document.createElement('img');
+    var dimensions = map.getSize();
+    img.width = dimensions.x;
+    img.height = dimensions.y;
+    img.src = canvas.toDataURL();
+    snapshot.innerHTML = '';
+    snapshot.appendChild(img);
+
+}
 
 </script>
 
