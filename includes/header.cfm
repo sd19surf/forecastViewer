@@ -8,6 +8,12 @@
  <script src="./scripts/SliderControl.js"></script>
  <script src="./scripts/jquery-1.9.1.min.js"></script>
  <script src="./scripts/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+ <script src="./scripts/turf.min.js"></script>
+ <script src="./scripts/leaflet-fractional-zoom-control.js"></script>
+    
+ <!---Added static maps in geoJSON for lowbandwidth viewing--->
+<script src="blocks.json" type="text/javascript"></script>
+<script src="world.geojson" type="text/javascript"></script>
+<script src="coastline.geojson" type="text/javascript"></script>
 
 </head>
