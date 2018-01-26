@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <cfinclude template="./includes/header.cfm" />
-<script src="blocks.json" type="text/javascript"></script>
 
 <body>
 
@@ -11,7 +10,8 @@
 var mapLat = 34;
 var mapLon = 50;
 var sliderControl = null;
-
+var testlayer;
+var world;
 //Leaflet map stuff
 
 
@@ -72,17 +72,6 @@ $.getJSON("points1.json", function(json) {
 
 	});
     
-
-
-
-
-var map = L.map('mapid').setView([mapLat, mapLon], 7);
-
-var openStreet = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 10,
-    id: 'mapbox.streets'
-}).addTo(map);
-    
  var states = L.geoJson(blocks, {
      onEachFeature: onEachFeature,
      style: function(feature){
@@ -92,16 +81,55 @@ var openStreet = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
          }
       }
  });
+
+//maps section and backgrounds
+
+//var map = L.map('mapid').setView([mapLat, mapLon],3);
+    
+var map = L.map('mapid',{zoomControl:true}).setView([mapLat, mapLon], 3);
+
+var openStreet = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 10,
+    id: 'mapbox.streets',
+    attribution: "OpenStreet Maps"
+});
+    
+    
+var stringWorld = L.geoJson(worldMap, {
+        attribution: "Natural Earth Countries"
+        }).addTo(map);
+    
+var stringCoastline = L.geoJson(coastline, {
+        attribution: "Natural Earth Coastline"
+        });
+
+
+   // var intersection = turf.intersect(stringWorld, testlayer);
+    
+   // console.log(intersection);
+
+    
+// Scales and other features
     
 L.control.scale().addTo(map);
     
+//map.addControl(L.control.fractionalZoom({position: 'topright', zoomIncrement:.5}));
+    
 var baseLayers = {
-    "OpenStreetMap": openStreet
+    
+    "OpenStreetMap": openStreet,
+    "String World": stringWorld,
+    "String Coastline": stringCoastline
 };
 var overlays = {
     "States": states
 };
+    
 L.control.layers(baseLayers, overlays).addTo(map);
+    
+    
+    
+// additional functions 
     
 window.onload=function() {
     getICAOs();
@@ -129,6 +157,14 @@ function getICAOs() {
     xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var returnedJSON = JSON.parse(this.responseText);
+        /* add turf comparsion        
+       // var points = turf.getCoord(returnedJSON);        
+       // var searchWithin = turf.getCoords(testLayer); 
+       // console.log (JSON.stringify(returnedJSON));
+        console.log (JSON.stringify(testlayer));
+        var pointWithin = turf.pointsWithinPolygon(returnedJSON, testlayer);        
+        console.log(pointWithin);
+        */
     for (var i=0; i < returnedJSON.length; i++){
         addNewPoint(returnedJSON[i].LAT,returnedJSON[i].LON);
         console.log(returnedJSON[i].STATION_NAME);
@@ -137,11 +173,12 @@ function getICAOs() {
         document.getElementById('threatTable').innerHTML=out;
      }
     }
-    
+   
   xhttp.open("POST", "viewer.cfc?method=getCountryICAOS&countryCode=IZ", true);
+  //xhttp.open("POST", "viewer.cfc?method=getStations", true);
   xhttp.send();
 
-    
+     
 } 
 
 </script>
