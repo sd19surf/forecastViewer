@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <cfinclude template="./includes/header.cfm" />
 
@@ -30,6 +30,28 @@ var world;
 
 <div id='snapshot'>test</div>
 --->
+    <div id="sidebar">
+        <h1>leaflet-sidebar</h1>
+
+        <p>A responsive sidebar plugin for for <a href="http://leafletjs.com/">Leaflet</a>, a JS library for interactive maps.</p>
+
+        <p><b>Click on the marker to show the sidebar again when you've closed it.</b></p>
+
+        <p>Other examples:</p>
+
+        <ul>
+            <li><a href="listing-markers.html">listing-markers example</a></li>
+            <li><a href="two-sidebars.html">two-sidebars example</a></li>
+        </ul>
+
+        <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+        <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+        <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+        <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+    </div>
 <div class="col-sm-8" id="mapid"></div>
 </div>
 
@@ -41,7 +63,7 @@ var world;
 //Fetch some data from a GeoJSON file
 
 
-$.getJSON("points1.json", function(json) {
+$.getJSON("28map.geojson", function(json) {
 
 
 	var testlayer = L.geoJson(json,{
@@ -50,6 +72,7 @@ $.getJSON("points1.json", function(json) {
 	    switch (feature.properties.threat){
 		case 'High Winds': return {color: "#ff0000"};
 		case 'Duststorm' : return {color: "#804000"};
+		case 'Tornado' : return {color: "#0000ff"};
 	    }
 	}
 	});
@@ -57,7 +80,7 @@ $.getJSON("points1.json", function(json) {
 
 	var sliderControl = L.control.sliderControl({
 
-	    position: "bottomright",
+	    position: "bottomleft",
 
 	    layer: testlayer,
 
@@ -86,6 +109,7 @@ $.getJSON("points1.json", function(json) {
          }
       }
  });
+    
 
 //maps section and backgrounds
 
@@ -114,10 +138,47 @@ var heat = L.heatLayer([], {maxZoom: 18}).addTo(map);
 var draw = true;
 
 
+        var sidebar = L.control.sidebar('sidebar', {
+            closeButton: true,
+            position: 'left'
+        });
+        map.addControl(sidebar);
+
+        setTimeout(function () {
+            sidebar.show();
+        }, 500);
+
+        var marker = L.marker([51.2, 7]).addTo(map).on('click', function () {
+            sidebar.toggle();
+        });
+
+        map.on('click', function () {
+            sidebar.hide();
+        })
+
+        sidebar.on('show', function () {
+            console.log('Sidebar will be visible.');
+        });
+
+        sidebar.on('shown', function () {
+            console.log('Sidebar is visible.');
+        });
+
+        sidebar.on('hide', function () {
+            console.log('Sidebar will be hidden.');
+        });
+
+        sidebar.on('hidden', function () {
+            console.log('Sidebar is hidden.');
+        });
+
+        L.DomEvent.on(sidebar.getCloseButton(), 'click', function () {
+            console.log('Close button clicked.');
+        });
 
 // add points on mouse move (except when interacting with the map)
 
-map.on({
+/*map.on({
     movestart: function () { draw = false; },
     moveend:   function () { draw = true; },
     mousemove: function (e) {
@@ -127,7 +188,7 @@ map.on({
         }
     }
 })
-
+*/
    // var intersection = turf.intersect(stringWorld, testlayer);
     
    // console.log(intersection);
@@ -162,18 +223,19 @@ window.onload=function() {
     
 
 function addNewPoint(mapLat, mapLon){
-	L.marker([mapLat, mapLon]).addTo(map);
+    var Latlng = [mapLat,mapLon];
+	L.circleMarker(Latlng, {radius:1, color:'darkgreen'}).addTo(map);
 }
 
 function onEachFeature(feature, layer) {
     // does this feature have a property named popupContent?
-    if (feature.properties && feature.properties.popupInformation) {
-        layer.bindPopup(feature.properties.popupInformation);
+    if (feature.properties && feature.properties.threat_detail && feature.properties.time && feature.properties.threat) {
+        layer.bindPopup("Threat: "+ feature.properties.threat +"<br>" + "Time :" + feature.properties.time + "<br>" + "Detail: " + feature.properties.threat_detail);
     }
 }
     
 function getICAOs() {
-  var out = "<tr><th>Station</th><th>Lat</th><th>Lon</th></tr>";
+  var out = "<h2>Threat Table</h2><br /><tr><th>Station</th><th>Lat</th><th>Lon</th></tr>";
   var xhttp; 
   var returnedJSON;
 
@@ -189,16 +251,58 @@ function getICAOs() {
         var pointWithin = turf.pointsWithinPolygon(returnedJSON, testlayer);        
         console.log(pointWithin);
         */
-    for (var i=0; i < returnedJSON.length; i++){
-        addNewPoint(returnedJSON[i].LAT,returnedJSON[i].LON);
-        console.log(returnedJSON[i].STATION_NAME);
-        out += "<tr><td>"+ returnedJSON[i].STATION_NAME+"</td><td>"+returnedJSON[i].LAT+"</td><td>"+ returnedJSON[i].LON+"</td></tr>";
+        
+        
+var cluster = [];
+var pointCollection = [];
+var features=[];
+var point1;
+
+$.getJSON("28map.geojson", function(data){
+
+    features = data.features;
+    
+for (var j = 0; j < returnedJSON.length; j++) {
+    
+   console.log("Number of points:"+j); 
+    // make a feature collection of the points returned
+    pointCollection.push(turf.point([returnedJSON[j].LAT,returnedJSON[j].LON], {"Station_Name": returnedJSON[j].STATION_NAME}));
+}
+    //addNewPoint(returnedJSON[j].LAT,returnedJSON[j].LON);
+ //assign the array to the featureCollection
+var icaoCollection = turf.featureCollection(pointCollection);
+    
+console.log(JSON.stringify(icaoCollection.features[0]));
+
+// collect all the stations in the polyfeatures
+
+var threatBases = turf.collect(data,icaoCollection,"Station_Name","Station_Name");
+
+var taggedBases = turf.tag(data,icaoCollection,'threat','threat');
+    
+    
+var pointsWithin = turf.pointsWithinPolygon(icaoCollection.features[0],data);
+
+console.log(JSON.stringify(pointsWithin));
+
+console.log(taggedBases.features[1]);   
+
+
+   // createTable(cluster);  //Create table of attributes
+}
+
+);
+    for (var i=0; i < cluster.length; i++){
+        addNewPoint(cluster[i].LAT,cluster[i].LON);
+       // heat.addLatLng([returnedJSON[i].LAT,returnedJSON[i].LON]);
+        //console.log(returnedJSON[i].STATION_NAME);
+        out += "<tr><td>"+ cluster[i].STATION_NAME+"</td><td>"+cluster[i].LAT+"</td><td>"+ cluster[i].LON+"</td></tr>";
      }
         document.getElementById('threatTable').innerHTML=out;
      }
     }
    
-  xhttp.open("POST", "viewer.cfc?method=getCountryICAOS&countryCode=IZ", true);
+  xhttp.open("POST", "viewer.cfc?method=getCountryICAOS&countryCode=QA", true);
   //xhttp.open("POST", "viewer.cfc?method=getStations", true);
   xhttp.send();
 
@@ -223,6 +327,11 @@ function doImage(err, canvas) {
     snapshot.innerHTML = '';
     snapshot.appendChild(img);
 
+}
+    
+function customICAOMarkers(json,latlng) {
+    //var attrib = json.properties;
+    return L.circleMarker(Latlng, {radius:10, color:'darkgreen'}).bindTooltip(attrib.icao);
 }
 
 </script>

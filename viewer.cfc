@@ -52,14 +52,14 @@
   </cffunction>  
     
 
-    <cffunction name="createJSON" access="private" returnType="ANY">
+    <cffunction name="createJSON" access="private" returnType="string">
     
     
         
     <cfquery name="getData" datasource="MySQL" >
         SELECT station_name, lat, lon, icao
         FROM web.station_list
-        WHERE END > '20170101' AND CTRY = "IZ" AND ICAO ="ORBD" OR ICAO = "ORBI"
+        WHERE END > '20170101' AND CTRY = "IZ"
         ORDER BY ICAO
     </cfquery>
         
@@ -68,9 +68,7 @@
      <cfset counter = 1 />  
     <cfsavecontent variable="myJSON">
     <cfoutput>
-
-        
-        {
+[{
     "type": "FeatureCollection",
         "features": [
         
@@ -95,13 +93,13 @@
         </cfif>
           <cfset counter++>
      </cfloop>
-        }
+        }]
     </cfoutput>
     </cfsavecontent> 
         
     <cfprocessingdirective suppresswhitespace="Yes"> 
       <cfoutput> 
-    <cfreturn #serializeJSON(myJSON)# />
+    <cfreturn #serializeJSON(myJSON,"struct")# />
       </cfoutput>
         </cfprocessingdirective> 
     </cffunction>
